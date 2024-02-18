@@ -21,9 +21,11 @@ function App() {
       const data = await response.json();
       setWeatherData([...weatherData, data]);
       setLocation("");
+      setError(null)
     } catch (error) {
-      prompt(error)
-      setError(error.message);
+      setError("Failed to fetch weather data. Please try again later.");
+      setLocation("");
+
     }
   };
 
@@ -42,27 +44,29 @@ function App() {
     setDarkMode(!darkMode);
   };
 
- 
-  
-  
   return (
-    
-      <div className=  {` h-screen ${darkMode ? 'bg-blue-100' : 'bg-gray-200'}`}>
-        <div className=" bg-blue-2003 flex justify-center items-center ml-9">
-          <p className="mt-20 font-bold text-2xl">Weather App</p>
-          <div>
-            {darkMode ? (
-              <IoMdSunny onClick={toggleDarkMode} className="text-yellow-500 mt-20 text-xl cursor-pointer" />
-            ) : (
-              <IoMdMoon onClick={toggleDarkMode} className="text-white mt-20 text-xl cursor-pointer" />
-            )}
-          </div>
-        </div>
+    <div className={`h-screen ${darkMode ? "bg-blue-100" : "bg-gray-200"}`}>
+      <div className="bg-blue-2003 flex justify-center items-center ml-9">
+        <p className="mt-20 font-bold text-2xl mr-2">Weather App</p>
         <div>
+          {darkMode ? (
+            <IoMdSunny
+              onClick={toggleDarkMode}
+              className="text-yellow-500 mt-20 text-xl cursor-pointer"
+            />
+          ) : (
+            <IoMdMoon
+              onClick={toggleDarkMode}
+              className="text-white mt-20 text-xl cursor-pointer"
+            />
+          )}
+        </div>
+      </div>
+      <div>
         <form className="" onSubmit={handleSubmit}>
           <div className="flex justify-center ">
             <input
-              className="shadow  appearance-none rounded-l-3xl w-4/6 py-2 px-3  text-gray-700 "
+              className="shadow focus:outline-none appearance-none rounded-l-3xl w-4/6 py-2 px-3  text-gray-700 "
               type="text"
               placeholder="Enter location..."
               value={location}
@@ -83,8 +87,9 @@ function App() {
             </button>
           </div>
         </form>
-        </div>
-        <div className="flex flex-wrap p-5">
+      </div>
+      {error && <div className="text-red-500 text-center mt-4">{error}</div>}
+      <div className="flex flex-wrap p-5">
         {weatherData.map((data, index) => (
           <WeatherCard
             key={index}
@@ -92,12 +97,10 @@ function App() {
             temperature={data.main.temp}
             weather={data.weather[0].main}
             onDelete={() => handleDelete(index)}
-            darkMode={darkMode} 
           />
         ))}
       </div>
-      </div>
-    
+    </div>
   );
 }
 
